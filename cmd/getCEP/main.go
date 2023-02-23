@@ -26,12 +26,12 @@ func buscaCEP(cep string) {
 		//time.Sleep(time.Second * 1)
 		req, err := http.Get("https://cdn.apicep.com/file/apicep/" + cep + ".json")
 		if err != nil {
-			log.Fatal("Erro ao fazer requisição")
+			log.Fatal("Error when making request")
 		}
 		defer req.Body.Close()
 		res, err := io.ReadAll(req.Body)
 		if err != nil {
-			fmt.Println("Erro ao ler resposta")
+			fmt.Println("Error reading response")
 		}
 		ch1 <- res
 	}()
@@ -41,22 +41,22 @@ func buscaCEP(cep string) {
 		req, err := http.Get("http://viacep.com.br/ws/" + cep + "/json/")
 
 		if err != nil {
-			log.Fatal("Erro ao fazer requisição")
+			log.Fatal("Error when making request")
 		}
 		defer req.Body.Close()
 		res, err := io.ReadAll(req.Body)
 		if err != nil {
-			fmt.Println("Erro ao ler resposta")
+			fmt.Println("Error reading response")
 		}
 		ch2 <- res
 	}()
 
 	select {
 	case msg := <-ch1:
-		fmt.Printf("Resposta recebida do endereço https://cdn.apicep.com/file/apicep/%s.json\n %s\n", cep, msg)
+		fmt.Printf("Response received from https://cdn.apicep.com/file/apicep/%s.json\n %s\n", cep, msg)
 
 	case msg := <-ch2:
-		fmt.Printf("Resposta recebida do endereço http://viacep.com.br/ws/%s/json/\n %s\n", cep, msg)
+		fmt.Printf("Response received from http://viacep.com.br/ws/%s/json/\n %s\n", cep, msg)
 
 	case <-time.After(time.Second * 1):
 		fmt.Println("Request timeout")
